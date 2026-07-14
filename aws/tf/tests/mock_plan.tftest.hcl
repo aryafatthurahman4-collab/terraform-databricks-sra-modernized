@@ -84,4 +84,28 @@ variables {
 run "plan_test" {
   command = plan
 }
+
+# Plans with the optional security features enabled, since the default run leaves them all off:
+# automatic cluster update, compliance security profile, enhanced security monitoring, account-level
+# disable of legacy features, IP-based ingress restriction, and serverless private endpoint rules.
+run "plan_test_full_features" {
+  command = plan
+
+  variables {
+    context_based_ingress_ip_acl             = ["203.0.113.0/24"]
+    disable_legacy_features_at_account_level = true
+    enable_automatic_cluster_update          = true
+    enable_compliance_security_profile       = true
+    enable_enhanced_security_monitoring      = true
+    serverless_private_endpoint_rules = [
+      {
+        endpoint_service = "com.amazonaws.vpce.us-west-2.vpce-svc-0123456789abcdef0"
+        domain_names     = ["db.internal.example.com"]
+      },
+      {
+        resource_names = ["my-example-bucket"]
+      },
+    ]
+  }
+}
 # ---------------
